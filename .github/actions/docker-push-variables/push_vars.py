@@ -16,15 +16,15 @@ def must_or_fail(input: str | None, error: str) -> str:
 
 
 # Decide if we should push the image or not
+# - Never push from the internal repo
+# - In upstream (goauthentik/authentik), require DOCKER_USERNAME (Docker Hub + GHCR)
+# - In forks, allow push to GHCR using GITHUB_TOKEN (no DOCKER_USERNAME needed)
 should_push = True
-if len(os.environ.get("DOCKER_USERNAME", "")) < 1:
-    # Don't push if we don't have DOCKER_USERNAME, i.e. no secrets are available
+repo = must_or_fail(os.environ.get("GITHUB_REPOSITORY"), "Repo required").lower()
+if repo == "goauthentik/authentik-internal":
     should_push = False
-if (
-    must_or_fail(os.environ.get("GITHUB_REPOSITORY"), "Repo required").lower()
-    == "goauthentik/authentik-internal"
-):
-    # Don't push on the internal repo
+elif repo == "goauthentik/authentik" and len(os.environ.get("DOCKER_USERNAME", "")) < 1:
+    # Upstream needs DOCKER_USERNAME for Docker Hub; skip push if not set
     should_push = False
 
 branch_name = os.environ["GITHUB_REF"]

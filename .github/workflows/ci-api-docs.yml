@@ -77,14 +77,14 @@ jobs:
           cache: "npm"
           cache-dependency-path: website/package-lock.json
       - name: Deploy Netlify (Production)
+        if: github.repository == 'goauthentik/authentik' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: website/api
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           NETLIFY_SITE_ID: authentik-api-docs.netlify.app
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         run: npx netlify deploy --no-build --prod
       - name: Deploy Netlify (Preview)
-        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
+        if: github.repository == 'goauthentik/authentik' && (github.event_name == 'pull_request' || github.ref != 'refs/heads/main')
         working-directory: website/api
         env:
           NETLIFY_SITE_ID: authentik-api-docs.netlify.app

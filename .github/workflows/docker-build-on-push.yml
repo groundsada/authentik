@@ -10,5 +10,5 @@ jobs:
     uses: ./.github/workflows/_reusable-docker-build.yml
     secrets: inherit
     with:
-      image_name: ghcr.io/goauthentik/dev-server
+      image_name: ghcr.io/${{ github.repository_owner }}/dev-server
       release: false

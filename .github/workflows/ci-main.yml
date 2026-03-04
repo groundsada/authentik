@@ -311,7 +311,7 @@ jobs:
     uses: ./.github/workflows/_reusable-docker-build.yml
     secrets: inherit
     with:
-      image_name: ${{ github.repository == 'goauthentik/authentik-internal' && 'ghcr.io/goauthentik/internal-server' || 'ghcr.io/goauthentik/dev-server' }}
+      image_name: ${{ github.repository == 'goauthentik/authentik-internal' && 'ghcr.io/goauthentik/internal-server' || format('ghcr.io/{0}/dev-server', github.repository_owner) }}
       release: false
   pr-comment:
     needs:
@@ -332,9 +332,10 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_CORP_USERNAME }}
         with:
-          image-name: ghcr.io/goauthentik/dev-server
+          image-name: ghcr.io/${{ github.repository_owner }}/dev-server
       - name: Comment on PR
         if: ${{ steps.ev.outputs.shouldPush == 'true' }}
         uses: ./.github/actions/comment-pr-instructions
         with:
           tag: ${{ steps.ev.outputs.imageMainTag }}
+          image-base: ghcr.io/${{ github.repository_owner }}
