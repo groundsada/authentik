@@ -64,6 +64,11 @@ jobs:
       - get-tags
       - build-server-amd64
       - build-server-arm64
+    permissions:
+      packages: write
+      id-token: write
+      attestations: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
